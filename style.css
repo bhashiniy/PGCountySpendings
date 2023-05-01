@@ -52,4 +52,21 @@ footer p {
   font-size: 14px;
 }
 
-/* Add your custom styles for data visualization here */
+form {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+input[type="text"] {
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border-radius: 0.25rem;
+  border: 2px solid #ccc;
+}
+

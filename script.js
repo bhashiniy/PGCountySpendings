@@ -55,3 +55,17 @@ async function displayData() {
 // Call the displayData function to show the chart
 displayData();
 
+const searchInput = document.getElementById("search");
+let filteredData = data; // assuming `data` is the variable holding the API response
+
+searchInput.addEventListener("input", () => {
+  const searchText = searchInput.value.toLowerCase();
+  if (searchText.length > 0) {
+    filteredData = data.filter((item) =>
+      item.payee_name.toLowerCase().includes(searchText)
+    );
+  } else {
+    filteredData = data;
+  }
+  renderData(filteredData); // assuming `renderData` is a function that displays the data on the page
+});
