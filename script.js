@@ -1,28 +1,57 @@
-// Define the API endpoint URL
-const apiEndpoint = 'https://data.princegeorgescountymd.gov/resource/umjn-t2iz.json';
+// Asynchronous data request to the API
+async function getDataFromAPI() {
+  const response = await fetch('https://data.princegeorgescountymd.gov/resource/rh7w-bmhm.json');
+  const data = await response.json();
+  return data;
+}
 
-// Fetch data from the API endpoint and visualize it
-fetch(apiEndpoint)
-  .then(response => response.json())
-  .then(data => {
-    // Filter data by a specific field value
-    const filteredData = data.filter(item => item.field_name === 'field_value');
+// Processing request using array methods
+async function processData() {
+  const data = await getDataFromAPI();
+  const filteredData = data.filter(item => item.agency === 'Police Department');
+  const mappedData = filteredData.map(item => ({
+    payee: item.payee_name,
+    amount: parseFloat(item.amount),
+  }));
+  const reducedData = mappedData.reduce((acc, item) => {
+    acc[item.payee] = acc[item.payee] || 0;
+    acc[item.payee] += item.amount;
+    return acc;
+  }, {});
 
-    // Visualize the filtered data using a library like D3.js or Plotly.js
-    // For example, here's how you can create a simple bar chart using D3.js:
-    const svg = d3.select('#visualization')
-                  .append('svg')
-                  .attr('width', 400)
-                  .attr('height', 200);
+  return reducedData;
+}
 
-    svg.selectAll('rect')
-       .data(filteredData)
-       .enter()
-       .append('rect')
-       .attr('x', (d, i) => i * 40)
-       .attr('y', (d) => 200 - d.value)
-       .attr('width', 20)
-       .attr('height', (d) => d.value)
-       .attr('fill', '#FD6CFD');
-  })
-  .catch(error => console.error(error));
+// Display data using a visualization library (e.g. Chart.js)
+async function displayData() {
+  const data = await processData();
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+
+  // Use Chart.js library to display the data as a chart
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Total Spending by Payee',
+        data: values,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+// Call the displayData function to show the chart
+displayData();
+
