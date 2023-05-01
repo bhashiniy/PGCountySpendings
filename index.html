@@ -1,24 +1,42 @@
 <!DOCTYPE html>
-<script src="script.js" type="text/javascript"></script>
 <html>
-  <head>
-    <title>Prince George's County Data Visualization</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <header>
-      <h1>Prince George's County Data Visualization</h1>
-    </header>
-    <main>
-      <section>
-        <h2>Data Visualization</h2>
-        <p>Here you can visualize data from Prince George's County API.</p>
-        <div id="visualization"></div>
-      </section>
-    </main>
-    <footer>
-      <p>&copy; 2023 Prince George's County Data Visualization</p>
-    </footer>
-    <script src="script.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Prince George's County Spending Information</title>
+  <style>
+    /* CSS code goes here */
+    .top-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-right">
+    <button id="filter-by-agency">Filter by Agency</button>
+    <button id="filter-by-zipcode">Filter by Zip Code</button>
+    <button id="sort-by-amount-asc">Sort by Amount (Ascending)</button>
+    <button id="sort-by-amount-desc">Sort by Amount (Descending)</button>
+  </div>
+  <h1>Prince George's County Spending Information</h1>
+  <table id="spending-table">
+    <thead>
+      <tr>
+        <th>Payee Name</th>
+        <th>Agency</th>
+        <th>Zip Code</th>
+        <th>Amount</th>
+        <th>Payment Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Table rows will be added dynamically by JavaScript code -->
+    </tbody>
+  </table>
+  <script>
+    // JavaScript code goes here
+  </script>
+</body>
 </html>
