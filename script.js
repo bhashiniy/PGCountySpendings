@@ -1,71 +1,142 @@
-// Asynchronous data request to the API
-async function getDataFromAPI() {
-  const response = await fetch('https://data.princegeorgescountymd.gov/resource/rh7w-bmhm.json');
-  const data = await response.json();
-  return data;
-}
+fetch('https://data.princegeorgescountymd.gov/resource/rh7w-bmhm.json')
+  .then(response => response.json())
+  .then(data => createPieChart(data))
+  .catch(error => console.error(error));
 
-// Processing request using array methods
-async function processData() {
-  const data = await getDataFromAPI();
-  const filteredData = data.filter(item => item.agency === 'Police Department');
-  const mappedData = filteredData.map(item => ({
-    payee: item.payee_name,
-    amount: parseFloat(item.amount),
-  }));
-  const reducedData = mappedData.reduce((acc, item) => {
-    acc[item.payee] = acc[item.payee] || 0;
-    acc[item.payee] += item.amount;
-    return acc;
-  }, {});
-
-  return reducedData;
-}
-
-// Display data using a visualization library (e.g. Chart.js)
-async function displayData() {
-  const data = await processData();
-  const labels = Object.keys(data);
-  const values = Object.values(data);
-
-  // Use Chart.js library to display the data as a chart
-  const ctx = document.getElementById('myChart').getContext('2d');
-  const myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Total Spending by Payee',
-        data: values,
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
+  function createPieChart(data) {
+    const counts = {};
+    for (const item of data) {
+      if (counts[item.agency] === undefined) {
+        counts[item.agency] = 1;
+      } else {
+        counts[item.agency]++;
       }
     }
-  });
-}
-
-// Call the displayData function to show the chart
-displayData();
-
-const searchInput = document.getElementById("search");
-let filteredData = data; // assuming `data` is the variable holding the API response
-
-searchInput.addEventListener("input", () => {
-  const searchText = searchInput.value.toLowerCase();
-  if (searchText.length > 0) {
-    filteredData = data.filter((item) =>
-      item.payee_name.toLowerCase().includes(searchText)
-    );
-  } else {
-    filteredData = data;
+  
+    const canvas = document.getElementById('pie-chart');
+    const ctx = canvas.getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: Object.keys(counts),
+        datasets: [{
+          data: Object.values(counts),
+          backgroundColor: [
+            '#ffcd56',
+            '#ff6384',
+            '#36a2eb',
+            '#fd6b19',
+            '#4bc0c0',
+            '#9966ff',
+            '#ff9f40',
+            '#ffd6b4',
+            '#00e600',
+            '#b3b3cc',
+          ],
+        }]
+      },
+      options: {}
+    });
   }
-  renderData(filteredData); // assuming `renderData` is a function that displays the data on the page
-});
+
+
+  fetch('https://data.princegeorgescountymd.gov/resource/rh7w-bmhm.json')
+  .then(response => response.json())
+  .then(data => {
+    const agencies = {}
+    data.forEach(record => {
+      if (agencies.hasOwnProperty(record.agency)) {
+        agencies[record.agency] += parseFloat(record.amount)
+      } else {
+        agencies[record.agency] = parseFloat(record.amount)
+      }
+    })
+
+    const labels = Object.keys(agencies)
+    const values = Object.values(agencies)
+
+    const ctx = document.getElementById('myChart').getContext('2d')
+    const myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Money Distribution by Agency',
+          data: values,
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    })
+  })
+
+
+  // Fetch the data from the API
+fetch('https://data.princegeorgescountymd.gov/resource/rh7w-bmhm.json')
+.then(response => response.json())
+.then(data => {
+  const spendingTable = document.getElementById('spending-table');
+  const tbody = spendingTable.getElementsByTagName('tbody')[0];
+  
+  // Add each row to the table
+  data.forEach(rowData => {
+    const row = tbody.insertRow();
+    const payeeNameCell = row.insertCell();
+    const agencyCell = row.insertCell();
+    const zipCodeCell = row.insertCell();
+    const amountCell = row.insertCell();
+    payeeNameCell.textContent = rowData.payee_name;
+    agencyCell.textContent = rowData.agency;
+    zipCodeCell.textContent = rowData.zip_code;
+    amountCell.textContent = rowData.amount;
+  });
+  
+  // Add filter inputs
+  const filterInputs = document.createElement('div');
+  filterInputs.innerHTML = `
+    <label for="payee-name-filter">Payee Name:</label>
+    <input type="text" id="payee-name-filter" />
+    <label for="agency-filter">Agency:</label>
+    <input type="text" id="agency-filter" />
+    <label for="zip-code-filter">Zip Code:</label>
+    <input type="text" id="zip-code-filter" />
+    <label for="amount-filter">Amount:</label>
+    <input type="text" id="amount-filter" />
+  `;
+  spendingTable.before(filterInputs);
+  
+  // Add event listeners to filter inputs
+  const payeeNameFilter = document.getElementById('payee-name-filter');
+  payeeNameFilter.addEventListener('input', () => filterTable(0, payeeNameFilter.value));
+  
+  const agencyFilter = document.getElementById('agency-filter');
+  agencyFilter.addEventListener('input', () => filterTable(1, agencyFilter.value));
+  
+  const zipCodeFilter = document.getElementById('zip-code-filter');
+  zipCodeFilter.addEventListener('input', () => filterTable(2, zipCodeFilter.value));
+  
+  const amountFilter = document.getElementById('amount-filter');
+  amountFilter.addEventListener('input', () => filterTable(3, amountFilter.value));
+  
+  // Function to filter the table
+  function filterTable(columnIndex, filterValue) {
+    const rows = tbody.getElementsByTagName('tr');
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const cellValue = row.getElementsByTagName('td')[columnIndex].textContent;
+      if (cellValue.toLowerCase().includes(filterValue.toLowerCase())) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    }}})
