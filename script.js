@@ -2,7 +2,7 @@ fetch('https://data.princegeorgescountymd.gov/resource/rh7w-bmhm.json')
   .then(response => response.json())
   .then(data => createPieChart(data))
   .catch(error => console.error(error));
-
+  
   function createPieChart(data) { 
     const counts = {};
     for (const item of data) {

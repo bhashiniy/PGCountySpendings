@@ -1,7 +1,7 @@
 PRINCE GEORGE'S COUNTY SPENDINGS
 
 GITHUB PAGES LINK: https://bhashiniy.github.io/PGcountySpendings/
-
+ 
 TARGET BROWSERS: Desktop browsers - Google Chrome, Mozilla Firefox, Apple Safari, and Microsoft Edge.
 Mobile browsers for iOS and Android.
 
