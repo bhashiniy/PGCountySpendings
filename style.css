@@ -2,13 +2,13 @@
 *{
   margin: 0;
   padding: 0; 
-  font-family: 'Vina Sans', cursive;
+  font-family: 'Lexend Deca', sans-serif;
 }
 
 .header{
   min-height: 100vh; 
   width: 100%;
-  background-image: url(images/crabs.png);
+  background-image: linear-gradient(rgba(4, 9, 30, 0.5), rgba(4, 9, 30, 0.424)), url(images/oldmap.png);
   background-position: center;
   background-size: cover;
   position: relative; 
@@ -38,21 +38,46 @@ nav img{
 }
 
 .nav-links ul li a{
-  color: #000000;
+  color: #fff;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .nav-links ul li::after{
   content:'';
   width: 0%;
   height: 2px;
-  background: #0e0b01;
+  background: #832424;
   display: block;
   margin: auto; 
   transition: 0.5s; 
 }
 
-.nav-links ul li::hover::after{
+.nav-links ul li:hover::after{
   width:100%;
+}
+
+.text-box{
+  width: 90%;
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  text-align:center;
+}
+
+.text-box h1{
+  font-size: 62px;
+}
+
+.text-box p{
+  margin: 10px 0 40px; 
+  font-size: 15px;
+  color: #988478;
+  text-shadow:
+        0.07em 0 black,
+        0 0.07em black,
+        -0.07em 0 black,
+        0 -0.07em black;
 }
